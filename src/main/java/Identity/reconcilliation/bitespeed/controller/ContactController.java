@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import Identity.reconcilliation.bitespeed.dto.IdentifyRequest;
 import Identity.reconcilliation.bitespeed.dto.IdentifyResponse;
+import Identity.reconcilliation.bitespeed.exception.InvalidRequestException;
 import Identity.reconcilliation.bitespeed.service.ContactService;
 
 @RestController
@@ -24,7 +25,8 @@ public class ContactController {
 
         // Validate if both are null, return bad request and then we can through certain exception 
         if (request.getEmail() == null && request.getPhoneNumber() == null) {
-            return ResponseEntity.badRequest().build();
+            // throw exception
+            throw new InvalidRequestException("Both email and phone number cannot be null.");
         }
 
         // to fetch response from backend logic implemented in service layer 
