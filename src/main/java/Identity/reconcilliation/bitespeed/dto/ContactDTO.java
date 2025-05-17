@@ -7,7 +7,7 @@ import lombok.Data;
 // for response body attributes needed
 @Data
 public class ContactDTO {
-       private int primaryContatctId;
+    private int primaryContatctId;
     private List<String> emails;
     private List<String> phoneNumbers;
     private List<Integer> secondaryContactIds;

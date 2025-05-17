@@ -1,5 +1,6 @@
 package Identity.reconcilliation.bitespeed.model;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
@@ -31,9 +32,9 @@ public class Contact {
     @Enumerated(EnumType.STRING)
     private LinkPrecedence linkPrecedence;
 
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
 
-    private OffsetDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
-    private OffsetDateTime deletedAt;
+    private LocalDateTime deletedAt;
 }
