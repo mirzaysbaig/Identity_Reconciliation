@@ -17,6 +17,21 @@ public class ContactController {
     @Autowired
     private ContactService contactService;
    
+    // use of post endpoint as we need to update too and send accordingly 
+    // accepts email and phone number in the request 
+    @PostMapping
+    public ResponseEntity<IdentifyResponse> identifyContact(@RequestBody IdentifyRequest request) {
+
+        // Validate if both are null, return bad request and then we can through certain exception 
+        if (request.getEmail() == null && request.getPhoneNumber() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // to fetch response from backend logic implemented in service layer 
+        IdentifyResponse response = contactService.identify(request.getEmail(), request.getPhoneNumber());
+
+        return ResponseEntity.ok(response);
+    }  
  
    
 }
