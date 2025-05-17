@@ -46,10 +46,12 @@ public class ContactService {
         Contact primary = resolvePrimaryContact(allMatched);
 
         // now updating all the other contacts to secondary if needed and linking the to primary  
-        linkAllToPrimary(allMatched, primary);
+        boolean linkedPrimary=linkAllToPrimary(allMatched, primary);
          
         // Case C
         // inserted new secondary contact if the provide comibination of email and phone is unique 
+        // when either data is not null 
+        if(linkedPrimary==false)  // if primary is not linked then we need secondary update here as already linked primary updates the prefrence
         insertNewSecondaryIfNeeded(email, phoneNumber, allMatched, primary);
         
         // final step
@@ -94,7 +96,8 @@ public class ContactService {
     
     // Case B- converting primary into secondary 
      // If multiple primaries exist one by email and other by phone number change other to secondary and link it to primary  
-    private void linkAllToPrimary(Set<Contact> contacts, Contact primary) {
+    private boolean linkAllToPrimary(Set<Contact> contacts, Contact primary) {
+        boolean linkedPrimary=false;
         for (Contact contact : contacts) {
             if (!contact.getId().equals(primary.getId()) && 
                 contact.getLinkPrecedence() == LinkPrecedence.primary) {
@@ -102,8 +105,11 @@ public class ContactService {
                 contact.setLinkedId(primary.getId());
                 contact.setUpdatedAt(LocalDateTime.now());
                 contactRepository.save(contact);
+                linkedPrimary=true;
+
             }
         }
+        return linkedPrimary;
     }
 
     // case C: creating secondary 
@@ -115,6 +121,14 @@ public class ContactService {
         boolean alreadyExists = allMatched.stream()
                 .anyMatch(c -> Objects.equals(c.getEmail(), email)
                         && Objects.equals(c.getPhoneNumber(), phoneNumber));
+        
+        // for handling any one null and other exist 
+        boolean phoneNumberExist=allMatched.stream()
+                .anyMatch(c->Objects.equals(c.getPhoneNumber(), phoneNumber));
+        boolean emailExist=allMatched.stream()
+                .anyMatch(c->Objects.equals(c.getEmail(),email));
+        
+        if((email == null && phoneNumberExist) || (emailExist && phoneNumber==null)) return;
 
         if (!alreadyExists && (email != null || phoneNumber != null)) {
             Contact newSecondary = new Contact();
